@@ -17,7 +17,12 @@
     "rich",
     "presence"
   ],
+  "bin": "./index.js",
   "author": "MarcTheDev",
   "license": "ISC",
-  "description": "A simple discord rich presence for roblox activities."
+  "description": "A simple discord rich presence for roblox activities.",
+  "pkg": {
+    "assets": "assets/*",
+    "outputPath": "dist"
+  }
 }
