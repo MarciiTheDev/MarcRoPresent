@@ -15,7 +15,7 @@ const client = require('./discord-rich-presence')('1079100772920332449');
 
 const bgProcess = new SysTray({
     menu: {
-        icon: fs.readFileSync(process.cwd()+'/MarcRoPresent.ico', "base64"),
+        icon: fs.readFileSync('./MarcRoPresent.ico', "base64"),
         tooltip: "Tips",
         items: [{
             title: 'Exit',
