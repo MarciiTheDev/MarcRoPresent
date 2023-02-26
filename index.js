@@ -40,7 +40,7 @@ function getPresence() {
         if (error) return;
         if (response.statusCode != 200) return;
         var presence = body.userPresences[0];
-        if(JSON.stringify(lastResponse) == JSON.stringify(presence)) return;
+        if(lastResponse.userPresenceType == presence.userPresenceType && lastResponse.lastLocation == presence.lastLocation && lastResponse.universeId == presence.universeId) return;
         var type = presence.userPresenceType;
         var universeId = presence.universeId;
         switch (type) {
