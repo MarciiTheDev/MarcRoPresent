@@ -6,7 +6,7 @@ const EventEmitter = require('events');
 const browser = typeof window !== 'undefined';
 
 function makeClient(clientId) {
-  const rpc = new Discord.Client({ transport: browser ? 'websocket' : 'ipc' });
+  var rpc = new Discord.Client({ transport: browser ? 'websocket' : 'ipc' });
 
   let connected = false;
   let activityCache = null;
@@ -46,9 +46,11 @@ function makeClient(clientId) {
 
   rpc.on('error', (e) => instance.emit('error', e));
 
-  rpc.login({ clientId })
+  function login(resolve) {
+    rpc.login({ clientId })
     .then(() => {
       instance.emit('connected');
+      instance.__connected = true;
       connected = true;
 
       rpc.subscribe('ACTIVITY_JOIN', ({ secret }) => {
@@ -65,10 +67,21 @@ function makeClient(clientId) {
         rpc.setActivity(activityCache).catch((e) => instance.emit('error', e));
         activityCache = null;
       }
+      resolve(instance);
     })
-    .catch((e) => instance.emit('error', e));
+    .catch((e) => {
+      console.log("Connected to Discord: false")
+      rpc = new Discord.Client({ transport: browser ? 'websocket' : 'ipc' });
+      setTimeout( () => {
+        login(resolve);
+      }, 10000);
+    });
+  }
 
-  return instance;
+  return new Promise((resolve, reject) => {
+    login(resolve);
+  });
+
 }
 
 module.exports = makeClient;
