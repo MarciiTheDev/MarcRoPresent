@@ -1,5 +1,10 @@
-if (!require('./config.json').roblosecurityToken) {
-    console.log('Please enter your .ROBLOSECURITY Cookie in config.json');
+try {
+    if (!require(process.cwd()+'/config.json').roblosecurityToken) {
+        console.log('Please enter your .ROBLOSECURITY Cookie in config.json');
+        process.exit(1);
+    }
+} catch(e) {
+    throw new Error('Please create a config.json file in the same directory as this file');
     process.exit(1);
 }
 
@@ -10,7 +15,7 @@ var lastResponse = {};
 
 var userId = null;
 
-request.get("https://users.roblox.com/v1/users/authenticated", { headers: { Cookie: ".ROBLOSECURITY=" + require('./config.json').roblosecurityToken }},
+request.get("https://users.roblox.com/v1/users/authenticated", { headers: { Cookie: ".ROBLOSECURITY=" + require(process.cwd()+'/config.json').roblosecurityToken }},
 function(err, res, body) {
     if(err) throw err;
     if(res.statusCode != 200) throw new Error("Invalid .ROBLOSECURITY Cookie");
@@ -29,7 +34,7 @@ function getImage(uId) {
 }
 
 function getPresence() {
-    request.post("https://presence.roblox.com/v1/presence/users", { json: true, body: {"userIds": [userId]}, headers: { Cookie: ".ROBLOSECURITY=" + require('./config.json').roblosecurityToken }},
+    request.post("https://presence.roblox.com/v1/presence/users", { json: true, body: {"userIds": [userId]}, headers: { Cookie: ".ROBLOSECURITY=" + require(process.cwd()+'/config.json').roblosecurityToken }},
     async function (error, response, body) {
         console.log(body);
         if (error) return;
@@ -40,7 +45,7 @@ function getPresence() {
         var universeId = presence.universeId;
         switch (type) {
             case 1:
-                if(!require('./config.json').website) { client.updatePresence(); break }
+                if(!require(process.cwd()+'/config.json').website) { client.updatePresence(); break }
                 else client.updatePresence({
                     details: 'Browsing',
                     state: presence.lastLocation,
@@ -50,7 +55,7 @@ function getPresence() {
                 })
                 break;
             case 2:
-                if(!require('./config.json').player) { client.updatePresence(); break }
+                if(!require(process.cwd()+'/config.json').player) { client.updatePresence(); break }
                 else client.updatePresence({
                     details: 'Playing',
                     state: presence.lastLocation,
@@ -61,7 +66,7 @@ function getPresence() {
                 })
                 break;
             case 3:
-                if(!require('./config.json').studio) { client.updatePresence(); break }
+                if(!require(process.cwd()+'/config.json').studio) { client.updatePresence(); break }
                 else client.updatePresence({
                     details: 'In Studio (Developing)',
                     state: presence.lastLocation,
