@@ -8,11 +8,27 @@ try {
     process.exit(1);
 }
 
-var request = require('request');
+const request = require('request');
+const fs = require('fs');
+const { default: SysTray } = require('systray');
 const client = require('./discord-rich-presence')('1079100772920332449');
 
-var lastResponse = {};
+const bgProcess = new SysTray({
+    menu: {
+        icon: fs.readFileSync(process.cwd()+'/MarcRoPresent.ico', "base64"),
+        tooltip: "Tips",
+        items: [{
+            title: 'Exit',
+            tooltip: 'Exit MarcRoPresent',
+            checked: false,
+            enabled: true
+        }]
+    },
+    debug: false,
+    copyDir: true
+});
 
+var lastResponse = {};
 var userId = null;
 
 request.get("https://users.roblox.com/v1/users/authenticated", { headers: { Cookie: ".ROBLOSECURITY=" + require(process.cwd()+'/config.json').roblosecurityToken }},
@@ -84,3 +100,7 @@ function getPresence() {
     });
     setTimeout(getPresence, 10000);
 }
+
+bgProcess.onClick(action => {
+    if(action.item.title == 'Exit') {bgProcess.kill(); process.exit(0)};
+})
